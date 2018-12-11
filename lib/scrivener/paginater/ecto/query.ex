@@ -7,14 +7,14 @@ defimpl Scrivener.Paginater, for: Ecto.Query do
 
   @spec paginate(Ecto.Query.t(), Scrivener.Config.t()) :: Scrivener.Page.t()
   def paginate(query, %Config{
-        page_size: page_size,
-        page_number: page_number,
-        module: repo,
-        caller: caller,
-        options: options
-      }) do
-    total_entries =
-      Keyword.get_lazy(options, :total_entries, fn -> total_entries(query, repo, caller) end)
+    page_size: page_size,
+    page_number: page_number,
+    module: repo,
+    caller: caller,
+    options: options
+  }) do
+
+    total_entries = Keyword.get_lazy(options, :total_entries, fn -> total_entries(query, repo, caller) end)
 
     total_pages = total_pages(total_entries, page_size)
     page_number = min(total_pages, page_number)
@@ -69,7 +69,7 @@ defimpl Scrivener.Paginater, for: Ecto.Query do
   defp aggregate(query) do
     query
     |> exclude(:select)
-    |> select(count("*"))
+    |> select("DISCTINCT count(id)")
   end
 
   defp count(query) do
